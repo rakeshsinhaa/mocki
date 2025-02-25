@@ -2,7 +2,7 @@ import React from 'react';
 
 const Header = () => {
   return (
-    <header className="pt-25  px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <header className="pt-17  px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="text-center">
         <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 animate-fadeIn">
           Welcome to{' '}

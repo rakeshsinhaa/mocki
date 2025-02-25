@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FeatureCard = ({ title, description, icon, image }) => {
+const FeatureCard = ({ title, description, icon, image, onClick }) => {
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300">
       <div className="h-48 overflow-hidden">
@@ -22,7 +22,10 @@ const FeatureCard = ({ title, description, icon, image }) => {
         <p className="text-gray-600">
           {description}
         </p>
-        <button className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transition-opacity duration-200">
+        <button 
+          onClick={onClick}
+          className="mt-4 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200"
+        >
           Explore Now
         </button>
       </div>
