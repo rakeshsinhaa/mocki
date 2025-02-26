@@ -40,19 +40,6 @@ Why This Project Matters?
 Competitive exam preparation requires effective practice, strategic learning, and continuous progress tracking. This platform leverages AI to automate question generation, summarization, and performance analytics, making exam preparation more efficient, personalized, and data-driven.
  Empowering students with AI-driven learning for smarter exam preparation! 
 
-My Role in the Project
-
-As a Full-Stack Developer, you are responsible for both the frontend and backend development of the AI-powered Mock Test Generator, ensuring seamless integration between the React frontend, FastAPI backend, and Gemini AI model.
-🔹 Key Responsibilities:
-Frontend (React.js)
-•	UI/UX Development: Build an intuitive, modern, and responsive interface for students to interact with the platform.
-•	State Management: Implement efficient state management for handling user sessions, test progress, and AI-generated data.
-•	API Integration: Connect the frontend with FastAPI to fetch AI-generated questions, summaries, and exam results.
-•	Authentication Handling: Integrate Firebase authentication for secure login/logout.
-Backend (FastAPI & Gemini AI)
-•	AI Model Integration: Integrate and fine-tune Gemini AI for question generation, summarization, and answer evaluation.
-•	Performance Optimization: Ensure the backend is fast and scalable, handling multiple user requests efficiently.
-
 
 
 
