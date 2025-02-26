@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Upload, BookOpen, Brain } from 'lucide-react';
+import { usePapers } from '../../context/PaperContext';
 
 const QuestionPaper = () => {
+  const { addGeneratedPaper } = usePapers();
   const [formData, setFormData] = useState({
     inputType: '',
     file: null,
@@ -10,6 +12,7 @@ const QuestionPaper = () => {
     questionType: '',
     totalMarks: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,15 +29,39 @@ const QuestionPaper = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log('Form submitted:', formData);
+    setLoading(true);
+
+    // Simulate AI paper generation
+    setTimeout(() => {
+      const newPaper = {
+        id: Date.now(),
+        title: `${formData.topic} - ${formData.questionType}`,
+        date: new Date().toISOString().split('T')[0],
+        subject: formData.topic,
+        difficulty: formData.difficulty,
+        totalMarks: formData.totalMarks,
+        preview: `https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=200`,
+        questions: [] // This would be filled with actual questions from AI
+      };
+
+      addGeneratedPaper(newPaper);
+      setLoading(false);
+      setFormData({
+        inputType: '',
+        file: null,
+        topic: '',
+        difficulty: '',
+        questionType: '',
+        totalMarks: ''
+      });
+    }, 2000);
   };
 
   return (
     <div className="pt-16">
-      {/* Animated Header */}
+      {/* Header */}
       <header className="py-16 px-4 text-center bg-gradient-to-r from-indigo-600 to-purple-600">
         <h1 className="text-5xl font-bold text-white mb-4 transform hover:scale-105 transition-transform duration-300 cursor-pointer animate-fadeIn">
           Question Paper Generator
@@ -69,6 +96,8 @@ const QuestionPaper = () => {
             >
               <option value="">Select Input Type</option>
               <option value="pdf">Upload PDF</option>
+              <option value="text">Manual Input</option>
+              <option value="url">Website URL</option>
             </select>
           </div>
 
@@ -148,9 +177,10 @@ const QuestionPaper = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Generate Questions
+            {loading ? 'Generating Questions...' : 'Generate Questions'}
           </button>
         </form>
       </main>
@@ -158,4 +188,4 @@ const QuestionPaper = () => {
   );
 };
 
-export default QuestionPaper;
+export default QuestionPaper

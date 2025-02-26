@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { BookOpen, CheckCircle, XCircle, Brain } from 'lucide-react';
+import { useProgress } from '../../context/ProgressContext';
 
 const MockTest = () => {
+  const { updateProgress } = useProgress();
   const [selectedExam, setSelectedExam] = useState(null);
   const [difficulty, setDifficulty] = useState('medium');
   const [negativeMarking, setNegativeMarking] = useState(false);
@@ -11,9 +13,9 @@ const MockTest = () => {
   const [loading, setLoading] = useState(false);
 
   const examTypes = [
-    { id: 'upsc', name: 'UPSC', icon: <BookOpen className="w-6 h-6" /> },
-    { id: 'jee', name: 'JEE', icon: <Brain className="w-6 h-6" /> },
-    { id: 'neet', name: 'NEET', icon: <BookOpen className="w-6 h-6" /> }
+    { id: 'UPSC', name: 'UPSC', icon: <BookOpen className="w-6 h-6" /> },
+    { id: 'JEE', name: 'JEE', icon: <Brain className="w-6 h-6" /> },
+    { id: 'NEET', name: 'NEET', icon: <BookOpen className="w-6 h-6" /> }
   ];
 
   const handleExamSelect = (examId) => {
@@ -62,13 +64,21 @@ const MockTest = () => {
     });
 
     const totalMarks = correct * 4 - (negativeMarking ? incorrect : 0);
+    const accuracy = Math.round((correct / questions.length) * 100);
 
-    setResult({
+    const testResults = {
       correct,
       incorrect,
       unattempted: questions.length - correct - incorrect,
-      totalMarks
-    });
+      totalMarks,
+      accuracy,
+      total: questions.length
+    };
+
+    setResult(testResults);
+
+    // Update progress for the selected exam type
+    updateProgress(selectedExam, testResults);
   };
 
   return (
