@@ -1,56 +1,100 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, ArrowRight } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, ArrowRight } from "lucide-react";
+import { auth } from "../../config/firebase";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 
 const Login = ({ onClose, setIsLoggedIn }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const googleProvider = new GoogleAuthProvider();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoggedIn(true);
+    setError("");
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      if (!user.emailVerified) {
+        setError("Please verify your email before logging in.");
+        setLoading(false);
+        return;
+      }
+
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn?.(true);
+      onClose?.();
+      navigate("/");
+    } catch (err) {
+      handleFirebaseError(err.code);
+    } finally {
       setLoading(false);
-      onClose();
-      navigate('/');
-    }, 1000);
+    }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setLoading(true);
-    // Simulate Google login
-    setTimeout(() => {
-      setIsLoggedIn(true);
+    setError("");
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn?.(true);
+      onClose?.();
+      navigate("/");
+    } catch (err) {
+      handleFirebaseError(err.code);
+    } finally {
       setLoading(false);
-      onClose();
-      navigate('/');
-    }, 1000);
+    }
+  };
+
+  const handleFirebaseError = (code) => {
+    const errorMessages = {
+      "auth/invalid-email": "Invalid email format.",
+      "auth/user-disabled": "This account has been disabled.",
+      "auth/user-not-found": "No account found with this email.",
+      "auth/wrong-password": "Incorrect password. Try again.",
+      "auth/popup-closed-by-user": "Google sign-in was canceled.",
+      "auth/cancelled-popup-request": "Google sign-in request was canceled.",
+      "auth/network-request-failed": "Network error. Check your connection.",
+    };
+    setError(errorMessages[code] || "Login failed. Please try again.");
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 animate-fadeIn">
-        <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold text-center mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
           Welcome Back
         </h2>
-        
+
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
         {/* Google Login Button */}
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
           className="w-full mb-6 bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg font-medium hover:bg-gray-50 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2"
         >
-          <img 
-            src="https://www.google.com/favicon.ico" 
-            alt="Google" 
+          <img
+            src="https://www.google.com/favicon.ico"
+            alt="Google"
             className="w-5 h-5"
           />
-          <span>Continue with Google</span>
+          <span>{loading ? "Logging in..." : "Continue with Google"}</span>
         </button>
 
         <div className="relative mb-6">
@@ -61,7 +105,7 @@ const Login = ({ onClose, setIsLoggedIn }) => {
             <span className="px-2 bg-white text-gray-500">Or continue with email</span>
           </div>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -98,7 +142,7 @@ const Login = ({ onClose, setIsLoggedIn }) => {
             disabled={loading}
             className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2"
           >
-            <span>{loading ? 'Logging in...' : 'Login'}</span>
+            <span>{loading ? "Logging in..." : "Login"}</span>
             {!loading && <ArrowRight className="w-4 h-4" />}
           </button>
         </form>
